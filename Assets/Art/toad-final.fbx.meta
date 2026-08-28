@@ -1,0 +1,251 @@
+fileFormatVersion: 2
+guid: WnNJ43z4UnrTarjVf7rV1m2gpPhc9PKKiFiWpVprcw9171Fq+G8Fnw8=
+ModelImporter:
+  serializedVersion: 22361
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pasted__body-low
+    second: {fileID: 2100000, guid: f14f531db9fb44f98cfd0bbb27751963, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pasted__eyes-low
+    second: {fileID: 2100000, guid: 1da636e2f5ae436eb08a5c3e6f55da1a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pasted__mouth-low
+    second: {fileID: 2100000, guid: da04a9bee5594d42ae0475ec83580fee, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    aCLCompressionLevel: 3
+    aCLCurvePrecision: 0.01
+    aCLFastSampleMode: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+    tuanjieGIEnable: 0
+    tuanjieGIGenSDFFactor: 1
+    tuanjieGIGenSDFBias: 0.25
+    tuanjieGIDoubleSidedMode: 0
+    tuanjieGIGenFacetNums: 12
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    totalVerticesCount: 28404
+    totalTrianglesCount: 29670
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  virtualGeometry:
+    virtualGeometry: 0
+    hasBoneWeight: 0
+    useTransparent: 0
+    setVGForeachMesh: 0
+    isFirstUse: 1
+    virtualGeometrySettings:
+      generateGeometryBuffer: 0
+      surfaceCompensation: 0
+      allMeshUse: 1
+      ignoreSimpleMesh: 0
+      transformScaleState: 0
+      isPossibleOverflow: 0
+    virtualGeometryPlatformSettings: []
+    selectedVGMeshes:
+    - index: 0
+      meshName: pasted__mouth-low2
+      meshGeometryBuffer: 0
+    - index: 1
+      meshName: pasted__eyes-low2
+      meshGeometryBuffer: 0
+    - index: 2
+      meshName: handleRight3
+      meshGeometryBuffer: 0
+    - index: 3
+      meshName: FrontTire_L
+      meshGeometryBuffer: 0
+    - index: 4
+      meshName: BackTire_Right
+      meshGeometryBuffer: 0
+    - index: 5
+      meshName: FrontTire_R
+      meshGeometryBuffer: 0
+    - index: 6
+      meshName: BackTire_Left
+      meshGeometryBuffer: 0
+    - index: 7
+      meshName: PLatform_R1
+      meshGeometryBuffer: 0
+    - index: 8
+      meshName: Pipe1Left
+      meshGeometryBuffer: 0
+    - index: 9
+      meshName: LongPipe_R
+      meshGeometryBuffer: 0
+    - index: 10
+      meshName: Buffles
+      meshGeometryBuffer: 0
+    - index: 11
+      meshName: BumperPipes
+      meshGeometryBuffer: 0
+    - index: 12
+      meshName: Bumper
+      meshGeometryBuffer: 0
+    - index: 13
+      meshName: FrontPipes
+      meshGeometryBuffer: 0
+    - index: 14
+      meshName: BumperBack
+      meshGeometryBuffer: 0
+    - index: 15
+      meshName: pasted__body-low2
+      meshGeometryBuffer: 0
+    supportVGMeshes:
+    - index: 0
+      meshName: pasted__mouth-low2
+      meshGeometryBuffer: 0
+    - index: 1
+      meshName: pasted__eyes-low2
+      meshGeometryBuffer: 0
+    - index: 2
+      meshName: handleRight3
+      meshGeometryBuffer: 0
+    - index: 3
+      meshName: FrontTire_L
+      meshGeometryBuffer: 0
+    - index: 4
+      meshName: BackTire_Right
+      meshGeometryBuffer: 0
+    - index: 5
+      meshName: FrontTire_R
+      meshGeometryBuffer: 0
+    - index: 6
+      meshName: BackTire_Left
+      meshGeometryBuffer: 0
+    - index: 7
+      meshName: PLatform_R1
+      meshGeometryBuffer: 0
+    - index: 8
+      meshName: Pipe1Left
+      meshGeometryBuffer: 0
+    - index: 9
+      meshName: LongPipe_R
+      meshGeometryBuffer: 0
+    - index: 10
+      meshName: Buffles
+      meshGeometryBuffer: 0
+    - index: 11
+      meshName: BumperPipes
+      meshGeometryBuffer: 0
+    - index: 12
+      meshName: Bumper
+      meshGeometryBuffer: 0
+    - index: 13
+      meshName: FrontPipes
+      meshGeometryBuffer: 0
+    - index: 14
+      meshName: BumperBack
+      meshGeometryBuffer: 0
+    - index: 15
+      meshName: pasted__body-low2
+      meshGeometryBuffer: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  overrideDefaultPose: 0
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    namedPoseList:
+    - name: Default
+      skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    defaultPoseIndex: -1
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
