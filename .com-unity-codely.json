@@ -1,10 +1,10 @@
 {
-  "unity_port": -1,
-  "stream_port": 50090,
+  "unity_port": 54894,
+  "stream_port": 52378,
   "created_date": "2026-06-05T09:03:46.3307550Z",
-  "project_path": "D:/Program Files (x86)/TuanJieGame/Project1_XJT/Assets",
+  "project_path": "D:/Documents/GitHub/Project1CarGame_XJT/Assets",
   "reloading": false,
-  "reason": "stopped",
+  "reason": "ready",
   "seq": 1,
-  "last_heartbeat": "2026-08-28T04:14:58.0348372Z"
+  "last_heartbeat": "2026-08-28T09:26:39.4390262Z"
 }
