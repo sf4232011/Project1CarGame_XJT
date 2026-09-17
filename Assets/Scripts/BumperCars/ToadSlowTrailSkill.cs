@@ -19,6 +19,7 @@ namespace BumperCars
         [SerializeField] private float minUsableCharge = 5f;
 
         [Header("Trail")]
+        [SerializeField] private Vector3 zoneScaleMultiplier = Vector3.one;
         [SerializeField] private float spawnInterval = 0.15f;
         [SerializeField] private float zoneLifetime = 8f;
         [SerializeField, Range(0.05f, 1f)] private float slowMultiplier = 0.5f;
@@ -58,7 +59,7 @@ namespace BumperCars
 
         private void Update()
         {
-            bool wantsToUse = IsSkillKeyHeld();
+            bool wantsToUse = controller != null && controller.ControlsEnabled && IsSkillKeyHeld();
             bool hasEnoughCharge = isGenerating ? currentCharge > 0f : currentCharge >= minUsableCharge;
             isGenerating = wantsToUse && hasEnoughCharge && slowZonePrefab != null;
 
@@ -103,6 +104,7 @@ namespace BumperCars
             Vector3 spawnPosition = GetSpawnPosition();
             Quaternion spawnRotation = Quaternion.LookRotation(controller.DriveForwardDirection, Vector3.up);
             SlowZone zone = Instantiate(slowZonePrefab, spawnPosition, spawnRotation);
+            zone.transform.localScale = Vector3.Scale(zone.transform.localScale, zoneScaleMultiplier);
             zone.Configure(zoneLifetime, slowMultiplier, slowDuration, controller);
         }
 

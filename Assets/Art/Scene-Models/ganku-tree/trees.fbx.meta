@@ -1,0 +1,560 @@
+fileFormatVersion: 2
+guid: Xn4a4yL8Aio23pf0PkJj0h8AZwBszxXLxxsG2l7JKedXnpepZ1VDAPA=
+ModelImporter:
+  serializedVersion: 22361
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    aCLCompressionLevel: 3
+    aCLCurvePrecision: 0.01
+    aCLFastSampleMode: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+    tuanjieGIEnable: 0
+    tuanjieGIGenSDFFactor: 1
+    tuanjieGIGenSDFBias: 0.25
+    tuanjieGIDoubleSidedMode: 0
+    tuanjieGIGenFacetNums: 12
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    totalVerticesCount: 1482684
+    totalTrianglesCount: 1967627
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  virtualGeometry:
+    virtualGeometry: 0
+    hasBoneWeight: 0
+    useTransparent: 0
+    setVGForeachMesh: 0
+    isFirstUse: 1
+    virtualGeometrySettings:
+      generateGeometryBuffer: 0
+      surfaceCompensation: 0
+      allMeshUse: 1
+      ignoreSimpleMesh: 0
+      transformScaleState: 0
+      isPossibleOverflow: 0
+    virtualGeometryPlatformSettings: []
+    selectedVGMeshes:
+    - index: 0
+      meshName: Mesh1
+      meshGeometryBuffer: 0
+    - index: 1
+      meshName: Mesh2
+      meshGeometryBuffer: 0
+    - index: 2
+      meshName: Mesh3
+      meshGeometryBuffer: 0
+    - index: 3
+      meshName: Mesh4
+      meshGeometryBuffer: 0
+    - index: 4
+      meshName: Mesh5
+      meshGeometryBuffer: 0
+    - index: 5
+      meshName: Mesh6
+      meshGeometryBuffer: 0
+    - index: 6
+      meshName: Mesh7
+      meshGeometryBuffer: 0
+    - index: 7
+      meshName: Mesh8
+      meshGeometryBuffer: 0
+    - index: 8
+      meshName: Mesh9
+      meshGeometryBuffer: 0
+    - index: 9
+      meshName: Mesh10
+      meshGeometryBuffer: 0
+    - index: 10
+      meshName: Mesh11
+      meshGeometryBuffer: 0
+    - index: 11
+      meshName: Mesh12
+      meshGeometryBuffer: 0
+    - index: 12
+      meshName: Mesh13
+      meshGeometryBuffer: 0
+    - index: 13
+      meshName: Mesh14
+      meshGeometryBuffer: 0
+    - index: 14
+      meshName: Mesh15
+      meshGeometryBuffer: 0
+    - index: 15
+      meshName: Mesh16
+      meshGeometryBuffer: 0
+    - index: 16
+      meshName: Mesh17
+      meshGeometryBuffer: 0
+    - index: 17
+      meshName: Mesh18
+      meshGeometryBuffer: 0
+    - index: 18
+      meshName: Mesh19
+      meshGeometryBuffer: 0
+    - index: 19
+      meshName: Mesh20
+      meshGeometryBuffer: 0
+    - index: 20
+      meshName: Mesh21
+      meshGeometryBuffer: 0
+    - index: 21
+      meshName: Mesh22
+      meshGeometryBuffer: 0
+    - index: 22
+      meshName: Mesh23
+      meshGeometryBuffer: 0
+    - index: 23
+      meshName: Mesh24
+      meshGeometryBuffer: 0
+    - index: 24
+      meshName: Mesh26
+      meshGeometryBuffer: 0
+    - index: 25
+      meshName: Mesh27
+      meshGeometryBuffer: 0
+    - index: 26
+      meshName: Mesh28
+      meshGeometryBuffer: 0
+    - index: 27
+      meshName: Mesh29
+      meshGeometryBuffer: 0
+    - index: 28
+      meshName: Mesh30
+      meshGeometryBuffer: 0
+    - index: 29
+      meshName: Mesh31
+      meshGeometryBuffer: 0
+    - index: 30
+      meshName: Mesh32
+      meshGeometryBuffer: 0
+    - index: 31
+      meshName: Mesh33
+      meshGeometryBuffer: 0
+    - index: 32
+      meshName: Mesh34
+      meshGeometryBuffer: 0
+    - index: 33
+      meshName: Mesh35
+      meshGeometryBuffer: 0
+    - index: 34
+      meshName: Mesh36
+      meshGeometryBuffer: 0
+    - index: 35
+      meshName: Mesh37
+      meshGeometryBuffer: 0
+    - index: 36
+      meshName: Mesh38
+      meshGeometryBuffer: 0
+    - index: 37
+      meshName: Mesh39
+      meshGeometryBuffer: 0
+    - index: 38
+      meshName: Mesh40
+      meshGeometryBuffer: 0
+    - index: 39
+      meshName: Mesh41
+      meshGeometryBuffer: 0
+    - index: 40
+      meshName: Mesh42
+      meshGeometryBuffer: 0
+    - index: 41
+      meshName: Mesh43
+      meshGeometryBuffer: 0
+    - index: 42
+      meshName: Mesh44
+      meshGeometryBuffer: 0
+    - index: 43
+      meshName: Mesh45
+      meshGeometryBuffer: 0
+    - index: 44
+      meshName: Mesh46
+      meshGeometryBuffer: 0
+    - index: 45
+      meshName: Mesh47
+      meshGeometryBuffer: 0
+    - index: 46
+      meshName: Mesh48
+      meshGeometryBuffer: 0
+    - index: 47
+      meshName: Mesh49
+      meshGeometryBuffer: 0
+    - index: 48
+      meshName: Mesh50
+      meshGeometryBuffer: 0
+    - index: 49
+      meshName: Mesh51
+      meshGeometryBuffer: 0
+    - index: 50
+      meshName: Mesh52
+      meshGeometryBuffer: 0
+    - index: 51
+      meshName: Mesh53
+      meshGeometryBuffer: 0
+    - index: 52
+      meshName: Mesh54
+      meshGeometryBuffer: 0
+    - index: 53
+      meshName: Mesh55
+      meshGeometryBuffer: 0
+    - index: 54
+      meshName: Mesh56
+      meshGeometryBuffer: 0
+    - index: 55
+      meshName: Mesh57
+      meshGeometryBuffer: 0
+    - index: 56
+      meshName: Mesh58
+      meshGeometryBuffer: 0
+    - index: 57
+      meshName: Mesh59
+      meshGeometryBuffer: 0
+    - index: 58
+      meshName: Mesh60
+      meshGeometryBuffer: 0
+    - index: 59
+      meshName: Mesh61
+      meshGeometryBuffer: 0
+    - index: 60
+      meshName: Mesh62
+      meshGeometryBuffer: 0
+    - index: 61
+      meshName: Mesh63
+      meshGeometryBuffer: 0
+    - index: 62
+      meshName: Mesh64
+      meshGeometryBuffer: 0
+    - index: 63
+      meshName: Mesh65
+      meshGeometryBuffer: 0
+    - index: 64
+      meshName: Mesh66
+      meshGeometryBuffer: 0
+    - index: 65
+      meshName: Mesh67
+      meshGeometryBuffer: 0
+    - index: 66
+      meshName: Mesh68
+      meshGeometryBuffer: 0
+    - index: 67
+      meshName: Mesh69
+      meshGeometryBuffer: 0
+    - index: 68
+      meshName: Mesh70
+      meshGeometryBuffer: 0
+    - index: 69
+      meshName: Mesh71
+      meshGeometryBuffer: 0
+    supportVGMeshes:
+    - index: 0
+      meshName: Mesh1
+      meshGeometryBuffer: 0
+    - index: 1
+      meshName: Mesh2
+      meshGeometryBuffer: 0
+    - index: 2
+      meshName: Mesh3
+      meshGeometryBuffer: 0
+    - index: 3
+      meshName: Mesh4
+      meshGeometryBuffer: 0
+    - index: 4
+      meshName: Mesh5
+      meshGeometryBuffer: 0
+    - index: 5
+      meshName: Mesh6
+      meshGeometryBuffer: 0
+    - index: 6
+      meshName: Mesh7
+      meshGeometryBuffer: 0
+    - index: 7
+      meshName: Mesh8
+      meshGeometryBuffer: 0
+    - index: 8
+      meshName: Mesh9
+      meshGeometryBuffer: 0
+    - index: 9
+      meshName: Mesh10
+      meshGeometryBuffer: 0
+    - index: 10
+      meshName: Mesh11
+      meshGeometryBuffer: 0
+    - index: 11
+      meshName: Mesh12
+      meshGeometryBuffer: 0
+    - index: 12
+      meshName: Mesh13
+      meshGeometryBuffer: 0
+    - index: 13
+      meshName: Mesh14
+      meshGeometryBuffer: 0
+    - index: 14
+      meshName: Mesh15
+      meshGeometryBuffer: 0
+    - index: 15
+      meshName: Mesh16
+      meshGeometryBuffer: 0
+    - index: 16
+      meshName: Mesh17
+      meshGeometryBuffer: 0
+    - index: 17
+      meshName: Mesh18
+      meshGeometryBuffer: 0
+    - index: 18
+      meshName: Mesh19
+      meshGeometryBuffer: 0
+    - index: 19
+      meshName: Mesh20
+      meshGeometryBuffer: 0
+    - index: 20
+      meshName: Mesh21
+      meshGeometryBuffer: 0
+    - index: 21
+      meshName: Mesh22
+      meshGeometryBuffer: 0
+    - index: 22
+      meshName: Mesh23
+      meshGeometryBuffer: 0
+    - index: 23
+      meshName: Mesh24
+      meshGeometryBuffer: 0
+    - index: 24
+      meshName: Mesh26
+      meshGeometryBuffer: 0
+    - index: 25
+      meshName: Mesh27
+      meshGeometryBuffer: 0
+    - index: 26
+      meshName: Mesh28
+      meshGeometryBuffer: 0
+    - index: 27
+      meshName: Mesh29
+      meshGeometryBuffer: 0
+    - index: 28
+      meshName: Mesh30
+      meshGeometryBuffer: 0
+    - index: 29
+      meshName: Mesh31
+      meshGeometryBuffer: 0
+    - index: 30
+      meshName: Mesh32
+      meshGeometryBuffer: 0
+    - index: 31
+      meshName: Mesh33
+      meshGeometryBuffer: 0
+    - index: 32
+      meshName: Mesh34
+      meshGeometryBuffer: 0
+    - index: 33
+      meshName: Mesh35
+      meshGeometryBuffer: 0
+    - index: 34
+      meshName: Mesh36
+      meshGeometryBuffer: 0
+    - index: 35
+      meshName: Mesh37
+      meshGeometryBuffer: 0
+    - index: 36
+      meshName: Mesh38
+      meshGeometryBuffer: 0
+    - index: 37
+      meshName: Mesh39
+      meshGeometryBuffer: 0
+    - index: 38
+      meshName: Mesh40
+      meshGeometryBuffer: 0
+    - index: 39
+      meshName: Mesh41
+      meshGeometryBuffer: 0
+    - index: 40
+      meshName: Mesh42
+      meshGeometryBuffer: 0
+    - index: 41
+      meshName: Mesh43
+      meshGeometryBuffer: 0
+    - index: 42
+      meshName: Mesh44
+      meshGeometryBuffer: 0
+    - index: 43
+      meshName: Mesh45
+      meshGeometryBuffer: 0
+    - index: 44
+      meshName: Mesh46
+      meshGeometryBuffer: 0
+    - index: 45
+      meshName: Mesh47
+      meshGeometryBuffer: 0
+    - index: 46
+      meshName: Mesh48
+      meshGeometryBuffer: 0
+    - index: 47
+      meshName: Mesh49
+      meshGeometryBuffer: 0
+    - index: 48
+      meshName: Mesh50
+      meshGeometryBuffer: 0
+    - index: 49
+      meshName: Mesh51
+      meshGeometryBuffer: 0
+    - index: 50
+      meshName: Mesh52
+      meshGeometryBuffer: 0
+    - index: 51
+      meshName: Mesh53
+      meshGeometryBuffer: 0
+    - index: 52
+      meshName: Mesh54
+      meshGeometryBuffer: 0
+    - index: 53
+      meshName: Mesh55
+      meshGeometryBuffer: 0
+    - index: 54
+      meshName: Mesh56
+      meshGeometryBuffer: 0
+    - index: 55
+      meshName: Mesh57
+      meshGeometryBuffer: 0
+    - index: 56
+      meshName: Mesh58
+      meshGeometryBuffer: 0
+    - index: 57
+      meshName: Mesh59
+      meshGeometryBuffer: 0
+    - index: 58
+      meshName: Mesh60
+      meshGeometryBuffer: 0
+    - index: 59
+      meshName: Mesh61
+      meshGeometryBuffer: 0
+    - index: 60
+      meshName: Mesh62
+      meshGeometryBuffer: 0
+    - index: 61
+      meshName: Mesh63
+      meshGeometryBuffer: 0
+    - index: 62
+      meshName: Mesh64
+      meshGeometryBuffer: 0
+    - index: 63
+      meshName: Mesh65
+      meshGeometryBuffer: 0
+    - index: 64
+      meshName: Mesh66
+      meshGeometryBuffer: 0
+    - index: 65
+      meshName: Mesh67
+      meshGeometryBuffer: 0
+    - index: 66
+      meshName: Mesh68
+      meshGeometryBuffer: 0
+    - index: 67
+      meshName: Mesh69
+      meshGeometryBuffer: 0
+    - index: 68
+      meshName: Mesh70
+      meshGeometryBuffer: 0
+    - index: 69
+      meshName: Mesh71
+      meshGeometryBuffer: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  overrideDefaultPose: 0
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    namedPoseList:
+    - name: Default
+      skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    defaultPoseIndex: -1
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

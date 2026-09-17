@@ -30,7 +30,14 @@ namespace BumperCars
                 generatedImpactClip = CreateImpactClip();
                 audioSource.clip = generatedImpactClip;
                 audioSource.playOnAwake = false;
-                audioSource.spatialBlend = 1f;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (generatedImpactClip != null)
+            {
+                Destroy(generatedImpactClip);
             }
         }
 

@@ -19,6 +19,7 @@ namespace BumperCars
         [SerializeField] private float inkFadeTime = 0.5f;
         [SerializeField] private float inkSprayRange = 6f;
         [SerializeField] private float inkSprayWidth = 2.5f;
+        [SerializeField] private float inkSprayHeight = 1f;
         [SerializeField] private float inkSprayLifetime = 0.35f;
         [SerializeField] private LayerMask targetMask = ~0;
 
@@ -60,7 +61,7 @@ namespace BumperCars
                 cooldownTimer = Mathf.Max(0f, cooldownTimer - Time.deltaTime);
             }
 
-            if (IsReady && IsSkillPressed())
+            if (controller != null && controller.ControlsEnabled && IsReady && IsSkillPressed())
             {
                 Activate();
             }
@@ -80,6 +81,10 @@ namespace BumperCars
 
         private void Activate()
         {
+            if (controller == null || !controller.ControlsEnabled || !IsReady)
+            {
+                return;
+            }
             cooldownTimer = cooldownTime;
             SpawnInkSpray();
 
@@ -99,7 +104,7 @@ namespace BumperCars
                 Quaternion spawnRotation = Quaternion.LookRotation(-controller.DriveForwardDirection, Vector3.up);
                 InkSprayHitbox hitbox = Instantiate(inkSprayPrefab, spawnPosition, spawnRotation);
                 hitbox.Configure(controller, inkSprayLifetime, inkDuration, inkFadeTime);
-                hitbox.transform.localScale = new Vector3(inkSprayWidth, hitbox.transform.localScale.y, inkSprayRange);
+                hitbox.transform.localScale = new Vector3(inkSprayWidth, inkSprayHeight, inkSprayRange);
                 return;
             }
 
@@ -120,7 +125,7 @@ namespace BumperCars
         {
             Vector3 center = GetInkSpawnPosition();
             Quaternion rotation = Quaternion.LookRotation(-controller.DriveForwardDirection, Vector3.up);
-            Vector3 halfExtents = new Vector3(inkSprayWidth * 0.5f, 1.25f, inkSprayRange * 0.5f);
+            Vector3 halfExtents = new Vector3(inkSprayWidth * 0.5f, inkSprayHeight * 0.5f, inkSprayRange * 0.5f);
             Collider[] hits = Physics.OverlapBox(center, halfExtents, rotation, targetMask, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < hits.Length; i++)
@@ -141,7 +146,7 @@ namespace BumperCars
 
             controller.TemporarilyAllowReverse(retreatDuration);
 
-            while (timer < retreatDuration)
+            while (timer < retreatDuration && controller.ControlsEnabled)
             {
                 timer += Time.fixedDeltaTime;
                 forceTimer -= Time.fixedDeltaTime;
@@ -155,6 +160,12 @@ namespace BumperCars
                 yield return new WaitForFixedUpdate();
             }
 
+            isRetreating = false;
+        }
+
+        private void OnDisable()
+        {
+            StopAllCoroutines();
             isRetreating = false;
         }
 

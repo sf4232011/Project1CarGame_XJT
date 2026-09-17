@@ -45,6 +45,7 @@ namespace BumperCars
         [SerializeField] private float acceleratingDrag = 0.35f;
 
         [Header("Grounding")]
+        [SerializeField] private Transform groundCheckOrigin;
         [SerializeField] private float groundCheckDistance = 0.85f;
         [SerializeField] private LayerMask groundMask = ~0;
         [SerializeField] private float airborneControlMultiplier = 0.2f;
@@ -65,10 +66,13 @@ namespace BumperCars
         private float speedModifierTimer;
         private float externalReverseTimer;
         private bool controlsEnabled = true;
+        private readonly RaycastHit[] groundHits = new RaycastHit[16];
 
         public event Action<float> ImpactReceived;
 
         public BumperCarPlayer Player => player;
+        public bool ControlsEnabled => controlsEnabled && isActiveAndEnabled;
+        public float SteeringInput => smoothedSteerInput;
         public Rigidbody Body => body;
         public float CurrentPlanarSpeed => GetPlanarVelocity(body.velocity).magnitude;
         public float CurrentForwardSpeed => Mathf.Max(0f, Vector3.Dot(GetPlanarVelocity(body.velocity), DriveForward));
@@ -212,7 +216,8 @@ namespace BumperCars
 
         private void ApplySteering(float controlMultiplier)
         {
-            smoothedSteerInput = Mathf.SmoothDamp(smoothedSteerInput, steerInput, ref steerInputVelocity, steerSmoothTime);
+            smoothedSteerInput = Mathf.SmoothDamp(smoothedSteerInput, steerInput, ref steerInputVelocity,
+                steerSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
 
             float drivingSpeed = Mathf.Max(CurrentForwardSpeed, CurrentReverseSpeed);
             if (Mathf.Abs(smoothedSteerInput) < 0.01f || drivingSpeed < minSpeedToTurn)
@@ -304,8 +309,16 @@ namespace BumperCars
 
         private bool IsGrounded()
         {
-            Vector3 origin = transform.position + Vector3.up * 0.08f;
-            return Physics.Raycast(origin, Vector3.down, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore);
+            Vector3 origin = (groundCheckOrigin != null ? groundCheckOrigin.position : transform.position) + Vector3.up * 0.08f;
+            int count = Physics.RaycastNonAlloc(origin, Vector3.down, groundHits, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                if (groundHits[i].collider.attachedRigidbody != body && groundHits[i].normal.y > 0.3f)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private float GetThrottleInput()
