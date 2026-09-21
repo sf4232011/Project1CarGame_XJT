@@ -1,10 +1,10 @@
 {
-  "unity_port": 63910,
+  "unity_port": -1,
   "stream_port": 60289,
   "created_date": "2026-06-05T09:03:46.3307550Z",
   "project_path": "D:/Documents/GitHub/Project1CarGame_XJT/Assets",
   "reloading": false,
-  "reason": "ready",
+  "reason": "stopped",
   "seq": 1,
-  "last_heartbeat": "2026-09-18T10:03:57.3950742Z"
+  "last_heartbeat": "2026-09-18T10:04:55.1105704Z"
 }
