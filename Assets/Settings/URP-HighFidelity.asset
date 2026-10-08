@@ -27,7 +27,7 @@ MonoBehaviour:
   m_HDRColorBufferPrecision: 0
   m_MSAA: 4
   m_MSAAHighQuality: 0
-  m_RenderScale: 1
+  m_RenderScale: 1.1
   DLSSPerfQualitySetting: 0
   DLSSUseOptimalSettings: 1
   m_UpscalingFilter: 0
