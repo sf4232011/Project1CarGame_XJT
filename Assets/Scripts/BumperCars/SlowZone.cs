@@ -18,6 +18,8 @@ namespace BumperCars
         {
             triggerCollider = GetComponent<Collider>();
             triggerCollider.isTrigger = true;
+            MeshRenderer placeholder = GetComponent<MeshRenderer>();
+            if (placeholder != null) placeholder.enabled = false;
         }
 
         private void OnEnable()
@@ -51,6 +53,9 @@ namespace BumperCars
             slowDuration = Mathf.Max(0.05f, newSlowDuration);
             owner = newOwner;
             lifeTimer = lifetime;
+            SalivaPuddleVfx visual = GetComponent<SalivaPuddleVfx>();
+            if (visual == null) visual = gameObject.AddComponent<SalivaPuddleVfx>();
+            visual.Initialize(lifetime);
         }
 
         private void TryApplySlow(Collider other)

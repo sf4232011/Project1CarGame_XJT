@@ -26,9 +26,11 @@ namespace BumperCars
 
         private float remainingTime;
         private bool gameEnded;
+        private int lastCountdownSecond = int.MaxValue;
 
         private void Awake()
         {
+            BumperCarAudio.Ensure(gameObject);
             ConfigureSplitScreen();
             remainingTime = matchDuration;
 
@@ -46,6 +48,11 @@ namespace BumperCars
             {
                 resultText.gameObject.SetActive(false);
             }
+        }
+
+        private void Start()
+        {
+            BumperCarAudio.BeginMatch();
         }
 
         private void OnEnable()
@@ -83,6 +90,10 @@ namespace BumperCars
 
             remainingTime = Mathf.Max(0f, remainingTime - Time.deltaTime);
             UpdateTimer();
+            int seconds = Mathf.CeilToInt(remainingTime);
+            if (seconds > 0 && seconds <= 10 && seconds != lastCountdownSecond)
+                BumperCarAudio.PlayCountdown(seconds);
+            lastCountdownSecond = seconds;
 
             if (remainingTime <= 0f)
             {
@@ -147,6 +158,7 @@ namespace BumperCars
             }
 
             gameEnded = true;
+            BumperCarAudio.EndMatch();
 
             if (player1Controller != null)
             {

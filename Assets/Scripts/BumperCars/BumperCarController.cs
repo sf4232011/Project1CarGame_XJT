@@ -50,6 +50,13 @@ namespace BumperCars
         [SerializeField] private LayerMask groundMask = ~0;
         [SerializeField] private float airborneControlMultiplier = 0.2f;
 
+        [Header("Road Alignment")]
+        [SerializeField] private bool alignToGround = true;
+        [SerializeField, Min(0f)] private float groundAlignmentSpeed = 10f;
+        [SerializeField, Range(0f, 65f)] private float maxGroundAngle = 55f;
+        [SerializeField, Min(0.1f)] private float groundProbeLift = 2f;
+        [SerializeField, Min(0.1f)] private float groundProbeDepth = 8f;
+
         [Header("Collision Recovery")]
         [SerializeField] private float impactRecoveryTime = 0.18f;
         [SerializeField] private float groundedExtraForce = 12f;
@@ -67,12 +74,17 @@ namespace BumperCars
         private float externalReverseTimer;
         private bool controlsEnabled = true;
         private readonly RaycastHit[] groundHits = new RaycastHit[16];
+        private readonly Vector3[] groundPoints = new Vector3[4];
+        private BoxCollider chassisCollider;
 
         public event Action<float> ImpactReceived;
 
         public BumperCarPlayer Player => player;
         public bool ControlsEnabled => controlsEnabled && isActiveAndEnabled;
         public float SteeringInput => smoothedSteerInput;
+        public float ThrottleInput => throttleInput;
+        public float MaxDrivingSpeed => Mathf.Max(1f, maxSpeed * speedMultiplier);
+        public bool IsOnGround { get; private set; }
         public Rigidbody Body => body;
         public float CurrentPlanarSpeed => GetPlanarVelocity(body.velocity).magnitude;
         public float CurrentForwardSpeed => Mathf.Max(0f, Vector3.Dot(GetPlanarVelocity(body.velocity), DriveForward));
@@ -81,7 +93,9 @@ namespace BumperCars
         public Vector3 DriveForwardDirection => DriveForward;
         public float CurrentSpeedModifier => speedModifierMultiplier;
 
-        private Vector3 DriveForward => useNegativeZAsForward ? -transform.forward : transform.forward;
+        private Vector3 PlanarForward => Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+        private Vector3 DriveForward => useNegativeZAsForward ? -PlanarForward : PlanarForward;
+        private Vector3 DriveRight => Vector3.Cross(Vector3.up, PlanarForward);
         private float EffectiveAcceleration => acceleration * speedMultiplier * speedModifierMultiplier;
         private float EffectiveReverseAcceleration => reverseAcceleration * speedMultiplier * speedModifierMultiplier;
         private float EffectiveMaxSpeed => maxSpeed * speedMultiplier * speedModifierMultiplier;
@@ -90,7 +104,8 @@ namespace BumperCars
         private void Awake()
         {
             body = GetComponent<Rigidbody>();
-            body.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            chassisCollider = GetComponent<BoxCollider>();
+            body.constraints = RigidbodyConstraints.FreezeRotation;
             body.interpolation = RigidbodyInterpolation.Interpolate;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             body.maxAngularVelocity = 10f;
@@ -117,6 +132,11 @@ namespace BumperCars
             {
                 impactRecoveryTimer -= Time.fixedDeltaTime;
             }
+            // Steering and road pitch are applied explicitly with MoveRotation.
+            // Static road contacts must not add a persistent steering impulse.
+            body.constraints = impactRecoveryTimer > 0f
+                ? RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ
+                : RigidbodyConstraints.FreezeRotation;
 
             if (externalReverseTimer > 0f)
             {
@@ -126,10 +146,11 @@ namespace BumperCars
             UpdateSpeedModifier();
 
             bool grounded = IsGrounded();
+            IsOnGround = grounded;
             float controlMultiplier = grounded ? 1f : airborneControlMultiplier;
 
             ApplyForwardAcceleration(controlMultiplier);
-            ApplySteering(controlMultiplier);
+            ApplyRoadRotation(GetSteeringDegrees(controlMultiplier));
             ApplyLateralGrip(controlMultiplier);
             ApplyRollingResistance(grounded);
             ClampPlanarSpeed();
@@ -153,9 +174,10 @@ namespace BumperCars
         public void ReceiveImpact(Vector3 impulse, float shakeIntensity)
         {
             impactRecoveryTimer = impactRecoveryTime;
+            body.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             body.AddForce(impulse, ForceMode.Impulse);
             Vector3 spinAxis = Vector3.Cross(Vector3.up, impulse.normalized);
-            body.AddTorque(Vector3.up * Vector3.Dot(spinAxis, transform.right) * impactSpinTorque, ForceMode.Impulse);
+            body.AddTorque(Vector3.up * Vector3.Dot(spinAxis, DriveRight) * impactSpinTorque, ForceMode.Impulse);
             ImpactReceived?.Invoke(shakeIntensity);
         }
 
@@ -214,7 +236,7 @@ namespace BumperCars
             }
         }
 
-        private void ApplySteering(float controlMultiplier)
+        private float GetSteeringDegrees(float controlMultiplier)
         {
             smoothedSteerInput = Mathf.SmoothDamp(smoothedSteerInput, steerInput, ref steerInputVelocity,
                 steerSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
@@ -222,7 +244,7 @@ namespace BumperCars
             float drivingSpeed = Mathf.Max(CurrentForwardSpeed, CurrentReverseSpeed);
             if (Mathf.Abs(smoothedSteerInput) < 0.01f || drivingSpeed < minSpeedToTurn)
             {
-                return;
+                return 0f;
             }
 
             float speedFactor = Mathf.Clamp01(drivingSpeed / Mathf.Max(minSpeedToTurn, EffectiveMaxSpeed));
@@ -232,15 +254,85 @@ namespace BumperCars
             float steerAmount = Mathf.Clamp(steeringDirection * steerSensitivity, -1f, 1f);
             float requestedDegreesPerSecond = steerAmount * turnSpeed * speedInfluence * highSpeedFactor * controlMultiplier;
             float cappedDegreesPerSecond = Mathf.Clamp(requestedDegreesPerSecond, -maxSteerAngle, maxSteerAngle);
-            float turnDegrees = cappedDegreesPerSecond * Time.fixedDeltaTime;
-            Quaternion nextRotation = body.rotation * Quaternion.Euler(0f, turnDegrees, 0f);
+            return cappedDegreesPerSecond * Time.fixedDeltaTime;
+        }
+
+        private void ApplyRoadRotation(float turnDegrees)
+        {
+            // Native rotation is locked on the road. Explicit MoveRotation
+            // follows its slope and applies player steering once per step.
+            Quaternion nextRotation = Quaternion.AngleAxis(turnDegrees, Vector3.up) * body.rotation;
+            if (alignToGround && TryGetRoadNormal(out Vector3 roadNormal))
+            {
+                Vector3 heading = Vector3.ProjectOnPlane(nextRotation * Vector3.forward, Vector3.up).normalized;
+                if (heading.sqrMagnitude > 0.001f)
+                {
+                    float blend = 1f - Mathf.Exp(-groundAlignmentSpeed * Time.fixedDeltaTime);
+                    Vector3 up = Vector3.Slerp(nextRotation * Vector3.up, roadNormal, blend).normalized;
+                    // Preserve the player's horizontal heading on cross-slopes.
+                    Vector3 forward = heading - Vector3.up * (Vector3.Dot(heading, up) / Mathf.Max(0.01f, up.y));
+                    nextRotation = Quaternion.LookRotation(forward.normalized, up);
+                }
+            }
             body.MoveRotation(nextRotation);
+        }
+
+        private bool TryGetRoadNormal(out Vector3 normal)
+        {
+            normal = Vector3.up;
+            if (chassisCollider == null) return false;
+            Vector3 center = chassisCollider.center;
+            Vector3 size = chassisCollider.size;
+            float closestGround = float.PositiveInfinity;
+            int count = 0;
+            Vector3 fallbackNormal = Vector3.zero;
+            float minimumNormalY = Mathf.Cos(maxGroundAngle * Mathf.Deg2Rad);
+            for (int corner = 0; corner < 4; corner++)
+            {
+                Vector3 local = center + new Vector3((corner & 1) == 0 ? -size.x * 0.42f : size.x * 0.42f,
+                    -size.y * 0.5f, (corner & 2) == 0 ? -size.z * 0.4f : size.z * 0.4f);
+                Vector3 origin = transform.TransformPoint(local) + Vector3.up * groundProbeLift;
+                int hits = Physics.RaycastNonAlloc(origin, Vector3.down, groundHits,
+                    groundProbeLift + groundProbeDepth, groundMask, QueryTriggerInteraction.Ignore);
+                float nearest = float.PositiveInfinity;
+                RaycastHit support = default;
+                for (int hit = 0; hit < hits; hit++)
+                {
+                    RaycastHit candidate = groundHits[hit];
+                    if (candidate.collider.attachedRigidbody == body || candidate.normal.y < minimumNormalY || candidate.distance >= nearest)
+                        continue;
+                    support = candidate;
+                    nearest = candidate.distance;
+                }
+                if (float.IsPositiveInfinity(nearest)) continue;
+                groundPoints[count++] = support.point;
+                fallbackNormal += support.normal;
+                closestGround = Mathf.Min(closestGround, nearest - groundProbeLift);
+            }
+
+            // Distant scenery below an airborne car must not dictate its pose.
+            if (count < 3 || closestGround > groundCheckDistance + 0.25f) return false;
+            Vector3 fitted;
+            if (count == 4)
+            {
+                Vector3 frontBack = groundPoints[2] + groundPoints[3] - groundPoints[0] - groundPoints[1];
+                Vector3 rightLeft = groundPoints[1] + groundPoints[3] - groundPoints[0] - groundPoints[2];
+                fitted = Vector3.Cross(frontBack, rightLeft);
+            }
+            else
+            {
+                fitted = Vector3.Cross(groundPoints[1] - groundPoints[0], groundPoints[2] - groundPoints[0]);
+            }
+            if (fitted.sqrMagnitude < 0.001f) fitted = fallbackNormal;
+            if (fitted.y < 0f) fitted = -fitted;
+            normal = Vector3.RotateTowards(Vector3.up, fitted.normalized, maxGroundAngle * Mathf.Deg2Rad, 0f);
+            return true;
         }
 
         private void ApplyLateralGrip(float controlMultiplier)
         {
             Vector3 planarVelocity = GetPlanarVelocity(body.velocity);
-            Vector3 lateralVelocity = Vector3.Project(planarVelocity, transform.right);
+            Vector3 lateralVelocity = Vector3.Project(planarVelocity, DriveRight);
             float grip = lateralGrip * controlMultiplier;
             if (impactRecoveryTimer > 0f)
             {
@@ -266,7 +358,7 @@ namespace BumperCars
             Vector3 velocity = body.velocity;
             Vector3 planarVelocity = GetPlanarVelocity(velocity);
             Vector3 forward = DriveForward;
-            Vector3 right = transform.right;
+            Vector3 right = DriveRight;
             float forwardSpeed = Vector3.Dot(planarVelocity, forward);
             float lateralSpeed = Vector3.Dot(planarVelocity, right);
             float minForwardSpeed = throttleInput < 0f || externalReverseTimer > 0f

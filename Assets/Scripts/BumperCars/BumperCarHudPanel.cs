@@ -11,6 +11,7 @@ namespace BumperCars
         [SerializeField] private TMP_Text healthText;
         [SerializeField] private Image healthFill;
         [SerializeField] private string playerName = "P1";
+        [SerializeField] private bool preserveArtworkColors = false;
 
         private void OnEnable()
         {
@@ -61,7 +62,9 @@ namespace BumperCars
             if (healthFill != null)
             {
                 healthFill.fillAmount = maxHealth <= 0f ? 0f : currentHealth / maxHealth;
-                healthFill.color = Color.Lerp(new Color(0.95f, 0.18f, 0.14f), new Color(0.12f, 0.85f, 0.36f), healthFill.fillAmount);
+                healthFill.color = preserveArtworkColors
+                    ? Color.white
+                    : Color.Lerp(new Color(0.95f, 0.18f, 0.14f), new Color(0.12f, 0.85f, 0.36f), healthFill.fillAmount);
             }
 
             if (healthText != null)

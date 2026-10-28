@@ -14,14 +14,16 @@ namespace BumperCars
         [SerializeField] private Transform inkSpawnPoint;
         [SerializeField] private ParticleSystem inkParticles;
 
+        [Header("Ink VFX")]
+        [SerializeField] private bool showInkVfx = true;
+        [SerializeField, Min(0f)] private float inkEmissionHeight = 0.55f;
+        [SerializeField, Min(1f)] private float inkFlightSpeed = 24f;
+
         [Header("Ink")]
         [SerializeField] private float inkDuration = 2.5f;
         [SerializeField] private float inkFadeTime = 0.5f;
-        [SerializeField] private float inkSprayRange = 6f;
         [SerializeField] private float inkSprayWidth = 2.5f;
         [SerializeField] private float inkSprayHeight = 1f;
-        [SerializeField] private float inkSprayLifetime = 0.35f;
-        [SerializeField] private LayerMask targetMask = ~0;
 
         [Header("Retreat")]
         [SerializeField] private float retreatForce = 16f;
@@ -35,11 +37,13 @@ namespace BumperCars
         [Header("UI")]
         [SerializeField] private Image cooldownFill;
         [SerializeField] private TMP_Text cooldownText;
+        [SerializeField] private bool preserveArtworkColors = false;
         [SerializeField] private Color readyColor = new Color(0.95f, 0.2f, 0.12f, 1f);
         [SerializeField] private Color cooldownColor = new Color(0.35f, 0.35f, 0.35f, 1f);
 
         private float cooldownTimer;
         private bool isRetreating;
+        private InkFlightPath currentInkFlight;
 
         public bool IsReady => cooldownTimer <= 0f && !isRetreating;
         public float CooldownNormalized => cooldownTime <= 0f ? 0f : Mathf.Clamp01(cooldownTimer / cooldownTime);
@@ -86,7 +90,14 @@ namespace BumperCars
                 return;
             }
             cooldownTimer = cooldownTime;
+            BumperCarAudio.PlayInk(controller);
+            currentInkFlight = InkFlightPath.Create(GetInkMouthPosition(), GetInkDirection(), inkFlightSpeed);
             SpawnInkSpray();
+
+            if (showInkVfx)
+            {
+                SkillLiquidVfx.PlayInk(currentInkFlight, inkSprayWidth);
+            }
 
             if (inkParticles != null)
             {
@@ -98,44 +109,28 @@ namespace BumperCars
 
         private void SpawnInkSpray()
         {
-            if (inkSprayPrefab != null)
-            {
-                Vector3 spawnPosition = GetInkSpawnPosition();
-                Quaternion spawnRotation = Quaternion.LookRotation(-controller.DriveForwardDirection, Vector3.up);
-                InkSprayHitbox hitbox = Instantiate(inkSprayPrefab, spawnPosition, spawnRotation);
-                hitbox.Configure(controller, inkSprayLifetime, inkDuration, inkFadeTime);
-                hitbox.transform.localScale = new Vector3(inkSprayWidth, inkSprayHeight, inkSprayRange);
-                return;
-            }
-
-            HitTargetsWithOverlapBox();
+            InkSprayHitbox hitbox = inkSprayPrefab != null
+                ? Instantiate(inkSprayPrefab)
+                : new GameObject("Ink flight hitbox", typeof(BoxCollider), typeof(Rigidbody)).AddComponent<InkSprayHitbox>();
+            hitbox.transform.localScale = new Vector3(inkSprayWidth, inkSprayHeight, 2f);
+            hitbox.ConfigureFlight(controller, currentInkFlight, inkDuration, inkFadeTime);
         }
 
-        private Vector3 GetInkSpawnPosition()
+        private Vector3 GetInkDirection()
+        {
+            // The face and mouth point along the vehicle's driving direction.
+            Vector3 forward = controller != null ? controller.DriveForwardDirection : transform.forward;
+            return Vector3.ProjectOnPlane(forward, Vector3.up).normalized;
+        }
+
+        private Vector3 GetInkMouthPosition()
         {
             if (inkSpawnPoint != null)
             {
                 return inkSpawnPoint.position;
             }
 
-            return transform.position - controller.DriveForwardDirection.normalized * (inkSprayRange * 0.5f);
-        }
-
-        private void HitTargetsWithOverlapBox()
-        {
-            Vector3 center = GetInkSpawnPosition();
-            Quaternion rotation = Quaternion.LookRotation(-controller.DriveForwardDirection, Vector3.up);
-            Vector3 halfExtents = new Vector3(inkSprayWidth * 0.5f, inkSprayHeight * 0.5f, inkSprayRange * 0.5f);
-            Collider[] hits = Physics.OverlapBox(center, halfExtents, rotation, targetMask, QueryTriggerInteraction.Ignore);
-
-            for (int i = 0; i < hits.Length; i++)
-            {
-                BumperCarController target = hits[i].GetComponentInParent<BumperCarController>();
-                if (target != null && target != controller)
-                {
-                    InkScreenOverlay.ShowForPlayer(target.Player, inkDuration, inkFadeTime);
-                }
-            }
+            return transform.position + GetInkDirection() * 0.9f + Vector3.up * inkEmissionHeight;
         }
 
         private IEnumerator RetreatRoutine()
@@ -188,7 +183,7 @@ namespace BumperCars
             {
                 cooldownFill.enabled = true;
                 cooldownFill.fillAmount = IsReady ? 1f : 1f - CooldownNormalized;
-                cooldownFill.color = IsReady ? readyColor : cooldownColor;
+                cooldownFill.color = preserveArtworkColors ? Color.white : IsReady ? readyColor : cooldownColor;
             }
 
             if (cooldownText != null)

@@ -30,9 +30,14 @@ namespace BumperCars
         [SerializeField] private float groundOffset = 0.03f;
         [SerializeField] private LayerMask groundMask = ~0;
 
+        [Header("Saliva VFX")]
+        [SerializeField] private bool showSalivaVfx = true;
+        [SerializeField, Min(0f)] private float salivaEmissionHeight = 0.5f;
+
         [Header("UI")]
         [SerializeField] private Image chargeFill;
         [SerializeField] private TMP_Text chargeText;
+        [SerializeField] private bool preserveArtworkColors = false;
         [SerializeField] private Color readyColor = new Color(0.25f, 0.95f, 0.35f);
         [SerializeField] private Color usingColor = new Color(0.1f, 0.75f, 1f);
         [SerializeField] private Color depletedColor = new Color(0.45f, 0.45f, 0.45f);
@@ -87,6 +92,13 @@ namespace BumperCars
             }
 
             UpdateChargeUi();
+            BumperCarAudio.SetSaliva(controller, isGenerating);
+        }
+
+        private void OnDisable()
+        {
+            isGenerating = false;
+            BumperCarAudio.SetSaliva(controller, false);
         }
 
         private bool IsSkillKeyHeld()
@@ -106,6 +118,15 @@ namespace BumperCars
             SlowZone zone = Instantiate(slowZonePrefab, spawnPosition, spawnRotation);
             zone.transform.localScale = Vector3.Scale(zone.transform.localScale, zoneScaleMultiplier);
             zone.Configure(zoneLifetime, slowMultiplier, slowDuration, controller);
+
+            if (showSalivaVfx)
+            {
+                Transform source = spawnPoint != null ? spawnPoint : transform;
+                float salivaScale = SkillLiquidVfx.GetSalivaScale(zone.transform);
+                Vector3 emissionPosition = source.position;
+                emissionPosition.y = Mathf.Max(emissionPosition.y, spawnPosition.y + salivaEmissionHeight * salivaScale);
+                SkillLiquidVfx.PlaySaliva(emissionPosition, spawnPosition, -controller.DriveForwardDirection, salivaScale);
+            }
         }
 
         private Vector3 GetSpawnPosition()
@@ -130,7 +151,9 @@ namespace BumperCars
             if (chargeFill != null)
             {
                 chargeFill.fillAmount = normalized;
-                chargeFill.color = currentCharge < minUsableCharge
+                chargeFill.color = preserveArtworkColors
+                    ? Color.white
+                    : currentCharge < minUsableCharge
                     ? depletedColor
                     : isGenerating ? usingColor : readyColor;
             }

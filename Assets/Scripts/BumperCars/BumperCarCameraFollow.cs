@@ -55,14 +55,17 @@ namespace BumperCars
             }
 
             // Camera distances are world units, independent of imported model scale.
-            Vector3 desiredPosition = target.position + target.rotation * localOffset;
+            // Follow yaw only so road pitch/roll cannot swing the camera underground.
+            Vector3 forward = Vector3.ProjectOnPlane(target.forward, Vector3.up);
+            Quaternion heading = forward.sqrMagnitude > 0.001f ? Quaternion.LookRotation(forward, Vector3.up) : Quaternion.identity;
+            Vector3 desiredPosition = target.position + heading * localOffset;
             Vector3 shakeOffset = Random.insideUnitSphere * (shakeIntensity * maxShakeOffset);
             shakeOffset.y *= 0.4f;
 
             transform.position = Vector3.SmoothDamp(transform.position, desiredPosition + shakeOffset, ref followVelocity,
                 positionSmoothTime, Mathf.Infinity, deltaTime);
 
-            Vector3 lookPoint = target.position + target.rotation * lookOffset + Vector3.up * lookHeight;
+            Vector3 lookPoint = target.position + heading * lookOffset + Vector3.up * lookHeight;
             Quaternion desiredRotation = Quaternion.LookRotation(lookPoint - transform.position, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, 1f - Mathf.Exp(-rotationSharpness * deltaTime));
 

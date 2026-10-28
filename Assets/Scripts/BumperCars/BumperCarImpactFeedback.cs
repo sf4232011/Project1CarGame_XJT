@@ -27,8 +27,13 @@ namespace BumperCars
 
             if (audioSource != null && audioSource.clip == null)
             {
-                generatedImpactClip = CreateImpactClip();
-                audioSource.clip = generatedImpactClip;
+                AudioClip impact = Resources.Load<AudioClip>("Audio/BumperCars/Impact");
+                if (impact == null)
+                {
+                    generatedImpactClip = CreateImpactClip();
+                    impact = generatedImpactClip;
+                }
+                audioSource.clip = impact;
                 audioSource.playOnAwake = false;
             }
         }
@@ -41,7 +46,7 @@ namespace BumperCars
             }
         }
 
-        public void Play(Vector3 worldPosition, float normalizedStrength)
+        public void Play(Vector3 worldPosition, float normalizedStrength, bool playAudio = true)
         {
             float strength = Mathf.Clamp01(normalizedStrength);
 
@@ -54,9 +59,9 @@ namespace BumperCars
                 impactParticles.Emit(Mathf.RoundToInt(Mathf.Lerp(10f, 28f, strength)));
             }
 
-            if (audioSource != null)
+            if (playAudio && !BumperCarAudio.PlayImpact(strength, GetComponentInParent<BumperCarController>()) && audioSource != null)
             {
-                audioSource.pitch = Mathf.Lerp(minPitch, maxPitch, Random.value);
+                audioSource.pitch = Mathf.Lerp(maxPitch, minPitch, strength) * Random.Range(0.98f, 1.02f);
                 audioSource.volume = Mathf.Lerp(minVolume, maxVolume, strength);
                 audioSource.PlayOneShot(audioSource.clip);
             }

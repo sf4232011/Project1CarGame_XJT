@@ -38,6 +38,7 @@ namespace BumperCars
 
         private BumperCarController controller;
         private BumperCarHealth health;
+        private BoxCollider chassisCollider;
 
         public BumperCarController Controller => controller;
         public BumperCarHealth Health => health;
@@ -46,6 +47,7 @@ namespace BumperCars
         {
             controller = GetComponent<BumperCarController>();
             health = GetComponent<BumperCarHealth>();
+            chassisCollider = GetComponent<BoxCollider>();
 
             if (impactFeedback == null)
             {
@@ -78,19 +80,23 @@ namespace BumperCars
         private void TryResolveCollision(Collision collision)
         {
             BumperCarCollisionDamage targetDealer = collision.collider.GetComponentInParent<BumperCarCollisionDamage>();
-            if (targetDealer == null || targetDealer == this || targetDealer.Health == null)
+            if (targetDealer == null)
             {
+                PlayEnvironmentImpact(collision);
                 return;
             }
+            if (targetDealer == this || targetDealer.Health == null) return;
 
             if (lastDamageTimes.TryGetValue(targetDealer, out float lastDamageTime) && Time.time - lastDamageTime < damageCooldown)
             {
+                PlayLightContact(collision, targetDealer);
                 return;
             }
 
             float attackerSpeed = controller.ImpactSpeedSample;
             if (attackerSpeed < minEffectiveSpeed)
             {
+                PlayLightContact(collision, targetDealer);
                 return;
             }
 
@@ -101,15 +107,77 @@ namespace BumperCars
             bool frontAttack = attackerSection == CarHitboxSection.Front || IsFacingTarget(targetDealer);
 
             float damage = CalculateDamage(attackerSpeed, targetSection, headOn);
+            float normalizedDamage = Mathf.Clamp01(damage / Mathf.Max(0.01f, maxSingleHitDamage));
+            // Trigger hitboxes overlap. Use the physical contact for the sound's
+            // section, while keeping the existing combat multipliers unchanged.
+            bool soundHandled = BumperCarAudio.PlayImpact(normalizedDamage, targetDealer.Controller,
+                targetDealer.GetAudioSection(GetAudioContactPoint(collision, contactPoint)), controller);
             lastDamageTimes[targetDealer] = Time.time;
+            // Queue the impact before a lethal hit can end and mute the match.
             targetDealer.Health.TakeDamage(damage);
 
-            ApplyImpactFeedbackAndKnockback(collision, targetDealer, damage);
+            ApplyImpactFeedbackAndKnockback(collision, targetDealer, damage, !soundHandled);
 
             if (frontAttack && targetSection != CarHitboxSection.Front)
             {
                 ApplyAttackerRecoilDamage(damage);
             }
+        }
+
+        private void PlayEnvironmentImpact(Collision collision)
+        {
+            if (controller == null || !controller.ControlsEnabled) return;
+            float normalSpeed = 0f;
+            Vector3 contactSum = Vector3.zero;
+            int wallContacts = 0;
+            for (int i = 0; i < collision.contactCount; i++)
+            {
+                ContactPoint contact = collision.GetContact(i);
+                // Road slopes and floor seams are rolling surfaces, not crashes.
+                if (Mathf.Abs(contact.normal.y) >= 0.65f) continue;
+                float speed = Mathf.Abs(Vector3.Dot(collision.relativeVelocity, contact.normal));
+                if (speed <= 2f) continue;
+                normalSpeed = Mathf.Max(normalSpeed, speed);
+                contactSum += contact.point;
+                wallContacts++;
+            }
+            if (normalSpeed <= 2f) return;
+            int surfaceId = collision.rigidbody != null ? collision.rigidbody.GetInstanceID() : collision.collider.GetInstanceID();
+            BumperCarAudio.PlayImpact(Mathf.InverseLerp(2f, 24f, normalSpeed), controller,
+                GetAudioSection(contactSum / wallContacts), null, surfaceId);
+        }
+
+        private void PlayLightContact(Collision collision, BumperCarCollisionDamage other)
+        {
+            float normalSpeed = 0f;
+            for (int i = 0; i < collision.contactCount; i++)
+                normalSpeed = Mathf.Max(normalSpeed, Mathf.Abs(Vector3.Dot(collision.relativeVelocity, collision.GetContact(i).normal)));
+            if (normalSpeed < 0.8f) return;
+            Vector3 point = GetAudioContactPoint(collision, other.transform.position);
+            BumperCarAudio.PlayImpact(Mathf.Min(0.18f, normalSpeed / 100f), other.Controller,
+                other.GetAudioSection(point), controller);
+        }
+
+        private static Vector3 GetAudioContactPoint(Collision collision, Vector3 fallback)
+        {
+            if (collision.contactCount == 0) return fallback;
+            Vector3 sum = Vector3.zero;
+            for (int i = 0; i < collision.contactCount; i++) sum += collision.GetContact(i).point;
+            return sum / collision.contactCount;
+        }
+
+        private CarHitboxSection GetAudioSection(Vector3 worldPoint)
+        {
+            if (chassisCollider == null) return GuessSectionFromContactPoint(worldPoint);
+            // Imported cars have offset pivots and very different scales. Measure
+            // against the actual chassis center and dimensions, in local space.
+            Vector3 local = transform.InverseTransformPoint(worldPoint) - chassisCollider.center;
+            float longitudinal = local.z / Mathf.Max(0.001f, chassisCollider.size.z * 0.5f);
+            float lateral = Mathf.Abs(local.x) / Mathf.Max(0.001f, chassisCollider.size.x * 0.5f);
+            if (Mathf.Abs(longitudinal) < 0.65f || Mathf.Abs(longitudinal) < lateral * 0.85f)
+                return CarHitboxSection.Body;
+            float forwardSign = Vector3.Dot(controller.DriveForwardDirection, transform.forward) >= 0f ? 1f : -1f;
+            return longitudinal * forwardSign >= 0f ? CarHitboxSection.Front : CarHitboxSection.Rear;
         }
 
         private float CalculateDamage(float attackerSpeed, CarHitboxSection targetSection, bool headOn)
@@ -135,18 +203,18 @@ namespace BumperCars
             health.TakeDamage(recoilDamage);
         }
 
-        private void ApplyImpactFeedbackAndKnockback(Collision collision, BumperCarCollisionDamage targetDealer, float damage)
+        private void ApplyImpactFeedbackAndKnockback(Collision collision, BumperCarCollisionDamage targetDealer, float damage, bool playAudio)
         {
             Vector3 hitDirection = GetHitDirection(collision, targetDealer.transform.position - transform.position);
             float impulseMagnitude = knockbackBaseImpulse + damage * knockbackPerDamage;
-            float normalizedDamage = Mathf.Clamp01(damage / maxSingleHitDamage);
+            float normalizedDamage = Mathf.Clamp01(damage / Mathf.Max(0.01f, maxSingleHitDamage));
 
             targetDealer.Controller.ReceiveImpact(hitDirection * impulseMagnitude, normalizedDamage);
             controller.ReceiveImpact(-hitDirection * impulseMagnitude * selfRecoilMultiplier, normalizedDamage * 0.5f);
 
             if (impactFeedback != null)
             {
-                impactFeedback.Play(GetContactPoint(collision, targetDealer.transform.position), normalizedDamage);
+                impactFeedback.Play(GetContactPoint(collision, targetDealer.transform.position), normalizedDamage, playAudio);
             }
         }
 

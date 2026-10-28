@@ -1,0 +1,11 @@
+Original bumper-car audio suite
+
+All waveforms, percussion and melodies were synthesized for this project using make_audio_assets.py. No third-party recordings, samples, song melodies or generative service were used.
+
+ArenaLoop: 64 seconds, 120 BPM, 32 bars, C/Am/F/G with bridge variations. Soft marimba lead, plucked chord offbeats, rounded bass, rim percussion and shakers. Stereo tails wrap around the 64-second loop.
+
+SalivaLoop: continuous bubbling liquid. EngineLoop: four-second electric motor/purr. TireRollLoop: four-second rubber/road rolling texture. These files loop in Unity. Engine and tire gain/pitch respond to driving speed, with additional motor load from throttle.
+
+EngineLoop, TireRollLoop, ImpactFront (bumper clonk), ImpactSide (panel/rattle), ImpactRear (hollow casing), and ImpactHeavy (low impact body) are reproducible with Docs/GenerateVehicleAudio.py. The three section impacts are selected from the real chassis contact; actual damage increases gain, lowers pitch and adds the heavy layer. Other files are one-shots.
+
+BGM importer: Vorbis, streaming, background load. Effects: PCM, decompress on load, mono. Runtime balancing belongs to the central game audio mixer.

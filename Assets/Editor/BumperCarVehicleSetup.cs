@@ -35,6 +35,7 @@ public static class BumperCarVehicleSetup
         Undo.IncrementCurrentGroup();
         int group = Undo.GetCurrentGroup();
         Undo.SetCurrentGroupName("Bind Octopus and Toad vehicles");
+        BumperCarSceneCollisionSetup.Configure(scene);
         // These imported meshes form both spawn platforms and their connecting
         // ramps. Without collision the cars fall through them to the old Plane.
         foreach (GameObject platform in roots.Where(g => g.name == "487" || g.name == "1485"))
@@ -66,13 +67,11 @@ public static class BumperCarVehicleSetup
 
         var ink = Ensure<RedCarInkRetreatSkill>(octopus);
         float octopusWidth = octopusBounds.size.x * octopus.transform.lossyScale.x;
-        float range = Mathf.Max(6f, octopusBounds.size.z * octopus.transform.lossyScale.z);
         Bind(ink, "controller", octopusController);
         Bind(ink, "inkSprayPrefab", inkPrefab);
-        Bind(ink, "inkSpawnPoint", Point(octopus.transform, "InkSpawnPoint",
-            new Vector3(octopusBounds.center.x, octopusBounds.center.y, octopusBounds.min.z - range * 0.5f / octopus.transform.lossyScale.z)));
+        BumperCars.Editor.OctopusInkMouthSetup.Configure(ink);
         SetFloat(ink, "inkSprayWidth", octopusWidth * 1.2f);
-        SetFloat(ink, "inkSprayRange", range);
+        SetFloat(ink, "inkFlightSpeed", 24f);
         SetFloat(ink, "inkSprayHeight", Mathf.Max(2f, octopusBounds.size.y * octopus.transform.lossyScale.y));
         Bind(ink, "cooldownFill", canvas.Find("RedSkillCooldown/Fill").GetComponent<Image>());
         Bind(ink, "cooldownText", canvas.Find("RedSkillCooldown/Label").GetComponent<TMP_Text>());
@@ -138,7 +137,7 @@ public static class BumperCarVehicleSetup
         var body = CopyOrAdd<Rigidbody>(car, legacy);
         body.isKinematic = false;
         body.useGravity = true;
-        body.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        body.constraints = RigidbodyConstraints.FreezeRotation;
         body.interpolation = RigidbodyInterpolation.Interpolate;
         body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         var collider = Ensure<BoxCollider>(car);
