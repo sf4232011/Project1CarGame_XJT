@@ -109,6 +109,7 @@ public static class BumperCarVehicleSetup
         Bind(manager, "player2Hud", hud2);
         Undo.RecordObject(legacy, "Disable legacy vehicle input");
         legacy.SetActive(false);
+        BumperCarRoadContinuitySetup.ConfigureBattleArea(scene);
         ValidateVehicles();
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);

@@ -10,11 +10,15 @@ namespace BumperCars
     }
 
     [RequireComponent(typeof(Rigidbody))]
+    [DefaultExecutionOrder(-100)]
     public sealed class BumperCarController : MonoBehaviour
     {
         [Header("Player")]
         [SerializeField] private BumperCarPlayer player = BumperCarPlayer.Player1;
         [SerializeField] private bool useNegativeZAsForward = true;
+
+        [Header("Battle Area")]
+        [SerializeField] private BumperCarBattleArea battleArea;
 
         [Header("Movement")]
         [SerializeField] private float speedMultiplier = 2.25f;
@@ -137,6 +141,7 @@ namespace BumperCars
 
         private void FixedUpdate()
         {
+            ConstrainToBattleArea();
             previousPlanarSpeed = CurrentPlanarSpeed;
 
             if (impactRecoveryTimer > 0f)
@@ -169,6 +174,18 @@ namespace BumperCars
 
             body.drag = Mathf.Abs(throttleInput) > 0f ? acceleratingDrag : idleDrag;
             body.AddForce(Vector3.down * (groundedExtraForce + CurrentPlanarSpeed * downforce * 0.08f), ForceMode.Acceleration);
+        }
+
+        private void LateUpdate()
+        {
+            // Physics impacts and retreat impulses can cross a low guard in
+            // the last simulation step. Correct before the follow cameras run.
+            ConstrainToBattleArea();
+        }
+
+        private void ConstrainToBattleArea()
+        {
+            if (battleArea != null) battleArea.Constrain(body, chassisCollider);
         }
 
         public void SetControlsEnabled(bool enabled)

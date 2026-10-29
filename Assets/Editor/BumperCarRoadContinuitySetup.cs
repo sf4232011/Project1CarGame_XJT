@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BumperCars;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -75,8 +76,25 @@ public static class BumperCarRoadContinuitySetup
         BuildRoute(scene, root, "Octopus North Guard", "OctopusNorthGuard", 143f, 183f, 12.5f, 13.5f,
             "octopslope2", "1485", OctopusProfile, false, false, 4f, 4f);
         ConfigureBoundaries(root);
+        ConfigureBattleArea(scene);
         Physics.SyncTransforms();
         Validate(scene);
+    }
+
+    public static void ConfigureBattleArea(Scene scene)
+    {
+        RequireScene(scene);
+        Transform root = GetRoot(scene);
+        BumperCarBattleArea area = root.GetComponent<BumperCarBattleArea>();
+        if (area == null) area = Undo.AddComponent<BumperCarBattleArea>(root.gameObject);
+        foreach (BumperCarController car in scene.GetRootGameObjects()
+            .SelectMany(g => g.GetComponentsInChildren<BumperCarController>())
+            .Where(car => car.gameObject.activeInHierarchy))
+        {
+            var data = new SerializedObject(car);
+            data.FindProperty("battleArea").objectReferenceValue = area;
+            data.ApplyModifiedProperties();
+        }
     }
 
     public static void Validate(Scene scene)
