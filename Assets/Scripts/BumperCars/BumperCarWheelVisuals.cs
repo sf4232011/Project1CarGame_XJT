@@ -24,7 +24,6 @@ namespace BumperCars
         }
 
         [SerializeField] private BumperCarController controller;
-        [SerializeField] private float steeringAngle = 30f;
         [SerializeField] private Wheel[] wheels = Array.Empty<Wheel>();
 
         private void Awake()
@@ -55,7 +54,7 @@ namespace BumperCars
             {
                 if (wheel.mesh == null) continue;
                 wheel.angle = (wheel.angle + speed * deltaTime / Mathf.Max(0.01f, wheel.radius) * Mathf.Rad2Deg) % 360f;
-                Quaternion steer = Quaternion.AngleAxis(wheel.steering ? controller.SteeringInput * steeringAngle : 0f, wheel.up);
+                Quaternion steer = Quaternion.AngleAxis(wheel.steering ? controller.SteeringAngle : 0f, wheel.up);
                 Quaternion rotation = steer * wheel.restRotation * Quaternion.AngleAxis(wheel.angle, wheel.axle);
                 // Imported tire pivots can be offset or mirrored. Rotate about the
                 // mesh center so the wheel does not orbit its original pivot.

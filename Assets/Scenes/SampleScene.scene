@@ -402,8 +402,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 41044802}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.25621074, y: -0.6370034, z: 0.20662114, w: 0.6970585}
-  m_LocalPosition: {x: -76.67038, y: 0.734108, z: -53.93203}
+  m_LocalRotation: {x: 0.2820341, y: -0.6288526, z: 0.23023881, w: 0.6870161}
+  m_LocalPosition: {x: -74.01668, y: 3.178482, z: -54.112873}
   m_LocalScale: {x: 6.0898, y: 6.0898013, z: 6.0898}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -417,7 +417,7 @@ Transform:
   - {fileID: 1295484029}
   - {fileID: 1134578895}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 38.347, y: -85.82, z: -2.804}
+  m_LocalEulerAnglesHint: {x: 42.617, y: -86.104, z: -2.988}
 --- !u!1 &45952160
 GameObject:
   m_ObjectHideFlags: 0
@@ -2877,7 +2877,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 434378879}
-  steeringAngle: 30
   wheels:
   - mesh: {fileID: 434378871}
     steering: 1
@@ -3069,12 +3068,16 @@ MonoBehaviour:
   reverseAcceleration: 32
   maxSpeed: 13
   maxReverseSpeed: 10
-  turnSpeed: 200
-  maxSteerAngle: 35
+  turnSpeed: 145
+  maxSteerAngle: 90
   steerSensitivity: 1
-  minSpeedToTurn: 0.5
+  minSpeedToTurn: 0.15
   turnSpeedFactor: 1
-  steerSmoothTime: 0.08
+  steerSmoothTime: 0.12
+  steeringFullSpeed: 10
+  steeringAcceleration: 540
+  steeringReturnAcceleration: 720
+  turningGripBoost: 2
   invertSteeringWhileReversing: 1
   accelerationFadeAtSpeed: 0.75
   lateralGrip: 7
@@ -3475,6 +3478,10 @@ MonoBehaviour:
   minSpeedToTurn: 0.4
   turnSpeedFactor: 1.4
   steerSmoothTime: 0.05
+  steeringFullSpeed: 10
+  steeringAcceleration: 540
+  steeringReturnAcceleration: 720
+  turningGripBoost: 2
   invertSteeringWhileReversing: 1
   accelerationFadeAtSpeed: 0.75
   lateralGrip: 1
@@ -6809,8 +6816,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 863217319}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.16443765, y: -0.6286355, z: 0.07574309, w: 0.75633365}
-  m_LocalPosition: {x: 95.65, y: 8.820902, z: -24.401001}
+  m_LocalRotation: {x: 0.105933495, y: -0.63259363, z: 0.027296199, w: 0.76671916}
+  m_LocalPosition: {x: 92.28, y: 18.78, z: -22.78}
   m_LocalScale: {x: 4.991855, y: 4.9918566, z: 4.9918556}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6826,7 +6833,7 @@ Transform:
   - {fileID: 929252890}
   - {fileID: 2126847940}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 20.119, y: -80.464, z: -5.633}
+  m_LocalEulerAnglesHint: {x: 11.36, y: -79.587, z: -5.394}
 --- !u!1 &868256972
 GameObject:
   m_ObjectHideFlags: 0
@@ -6969,17 +6976,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 69793969a08325b40b49a9858ab9a171,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -131.2952
+      value: -132.27
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 69793969a08325b40b49a9858ab9a171,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 52.509357
+      value: 49.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 69793969a08325b40b49a9858ab9a171,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -28.576916
+      value: -28.6
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 69793969a08325b40b49a9858ab9a171,
         type: 3}
@@ -7324,7 +7331,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 868262279}
-  steeringAngle: 30
   wheels:
   - mesh: {fileID: 868262271}
     steering: 1
@@ -7503,12 +7509,16 @@ MonoBehaviour:
   reverseAcceleration: 32
   maxSpeed: 13
   maxReverseSpeed: 10
-  turnSpeed: 150
-  maxSteerAngle: 45
-  steerSensitivity: 1.3
-  minSpeedToTurn: 0.4
-  turnSpeedFactor: 1.4
-  steerSmoothTime: 0.05
+  turnSpeed: 135
+  maxSteerAngle: 90
+  steerSensitivity: 1
+  minSpeedToTurn: 0.15
+  turnSpeedFactor: 1
+  steerSmoothTime: 0.12
+  steeringFullSpeed: 10
+  steeringAcceleration: 540
+  steeringReturnAcceleration: 720
+  turningGripBoost: 2
   invertSteeringWhileReversing: 1
   accelerationFadeAtSpeed: 0.75
   lateralGrip: 1
@@ -8814,7 +8824,7 @@ Transform:
   m_GameObject: {fileID: 1058257403}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000008141171, y: -0.034555726, z: 0.00000000281492, w: 0.99940276}
-  m_LocalPosition: {x: -138.6, y: -21.900002, z: -30.9}
+  m_LocalPosition: {x: -139.5, y: -26.6, z: -31}
   m_LocalScale: {x: 516.90625, y: 427.88467, z: 592.9431}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18626,7 +18636,7 @@ Transform:
   m_GameObject: {fileID: 1329125105774536501}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 119.69, y: -4.4563, z: -14.895}
+  m_LocalPosition: {x: 123.7, y: -8.1, z: -14.895}
   m_LocalScale: {x: 6.2103143, y: 3.1094732, z: 5.7648363}
   m_ConstrainProportionsScale: 0
   m_Children:

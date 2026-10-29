@@ -150,15 +150,10 @@ public static class BumperCarVehicleSetup
         controllerData.FindProperty("player").enumValueIndex = (int)player;
         controllerData.FindProperty("useNegativeZAsForward").boolValue = false;
         controllerData.ApplyModifiedProperties();
-        // Preserve the former red car's steering tuning from the previous scene.
+        ConfigureSteering(controller);
+        // Preserve the former red car's lateral grip.
         if (player == BumperCarPlayer.Player2)
         {
-            SetFloat(controller, "turnSpeed", 200f);
-            SetFloat(controller, "maxSteerAngle", 35f);
-            SetFloat(controller, "steerSensitivity", 1f);
-            SetFloat(controller, "minSpeedToTurn", 0.5f);
-            SetFloat(controller, "turnSpeedFactor", 1f);
-            SetFloat(controller, "steerSmoothTime", 0.08f);
             SetFloat(controller, "lateralGrip", 7f);
         }
         Bind(controller, "groundCheckOrigin", Point(car.transform, "GroundCheck",
@@ -203,6 +198,20 @@ public static class BumperCarVehicleSetup
         }
         wheelData.ApplyModifiedProperties();
         return bounds;
+    }
+
+    public static void ConfigureSteering(BumperCarController controller)
+    {
+        SetFloat(controller, "turnSpeed", controller.Player == BumperCarPlayer.Player1 ? 135f : 145f);
+        SetFloat(controller, "maxSteerAngle", 90f);
+        SetFloat(controller, "steerSensitivity", 1f);
+        SetFloat(controller, "minSpeedToTurn", 0.15f);
+        SetFloat(controller, "turnSpeedFactor", 1f);
+        SetFloat(controller, "steerSmoothTime", 0.12f);
+        SetFloat(controller, "steeringFullSpeed", 10f);
+        SetFloat(controller, "steeringAcceleration", 540f);
+        SetFloat(controller, "steeringReturnAcceleration", 720f);
+        SetFloat(controller, "turningGripBoost", 2f);
     }
 
     private static Bounds MeshBounds(Transform root, MeshFilter mesh)

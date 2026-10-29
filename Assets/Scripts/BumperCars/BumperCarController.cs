@@ -24,12 +24,16 @@ namespace BumperCars
         [SerializeField] private float maxReverseSpeed = 10f;
 
         [Header("Steering")]
-        [SerializeField] private float turnSpeed = 120f;
-        [SerializeField] private float maxSteerAngle = 35f;
+        [SerializeField, Min(0f), Tooltip("Peak commanded yaw speed in degrees per second.")] private float turnSpeed = 140f;
+        [SerializeField, Range(0f, 90f), Tooltip("Maximum front-wheel steering command in degrees.")] private float maxSteerAngle = 90f;
         [SerializeField] private float steerSensitivity = 1f;
-        [SerializeField] private float minSpeedToTurn = 0.5f;
+        [SerializeField, Min(0f)] private float minSpeedToTurn = 0.15f;
         [SerializeField] private float turnSpeedFactor = 1f;
-        [SerializeField] private float steerSmoothTime = 0.08f;
+        [SerializeField, Min(0.01f)] private float steerSmoothTime = 0.12f;
+        [SerializeField, Min(0.1f)] private float steeringFullSpeed = 10f;
+        [SerializeField, Min(1f)] private float steeringAcceleration = 540f;
+        [SerializeField, Min(1f)] private float steeringReturnAcceleration = 720f;
+        [SerializeField, Min(0f)] private float turningGripBoost = 2f;
         [SerializeField] private bool invertSteeringWhileReversing = true;
 
         [Header("Physics Feel")]
@@ -67,6 +71,7 @@ namespace BumperCars
         private float steerInput;
         private float smoothedSteerInput;
         private float steerInputVelocity;
+        private float steeringYawRate;
         private float impactRecoveryTimer;
         private float previousPlanarSpeed;
         private float speedModifierMultiplier = 1f;
@@ -82,6 +87,10 @@ namespace BumperCars
         public BumperCarPlayer Player => player;
         public bool ControlsEnabled => controlsEnabled && isActiveAndEnabled;
         public float SteeringInput => smoothedSteerInput;
+        public float MaxSteeringAngle => Mathf.Clamp(maxSteerAngle, 0f, 90f);
+        public float SteeringCommandAngle => smoothedSteerInput * MaxSteeringAngle;
+        public float SteeringAngle => SteeringCommandAngle * SteeringSpeedDamping;
+        public float SteeringYawRate => steeringYawRate;
         public float ThrottleInput => throttleInput;
         public float MaxDrivingSpeed => Mathf.Max(1f, maxSpeed * speedMultiplier);
         public bool IsOnGround { get; private set; }
@@ -100,6 +109,8 @@ namespace BumperCars
         private float EffectiveReverseAcceleration => reverseAcceleration * speedMultiplier * speedModifierMultiplier;
         private float EffectiveMaxSpeed => maxSpeed * speedMultiplier * speedModifierMultiplier;
         private float EffectiveMaxReverseSpeed => maxReverseSpeed * speedMultiplier * speedModifierMultiplier;
+        private float SteeringSpeedDamping => Mathf.Lerp(1f, Mathf.Clamp01(highSpeedSteeringReduction),
+            Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(CurrentPlanarSpeed / MaxDrivingSpeed)));
 
         private void Awake()
         {
@@ -168,6 +179,8 @@ namespace BumperCars
                 throttleInput = 0f;
                 steerInput = 0f;
                 smoothedSteerInput = 0f;
+                steerInputVelocity = 0f;
+                steeringYawRate = 0f;
             }
         }
 
@@ -238,23 +251,38 @@ namespace BumperCars
 
         private float GetSteeringDegrees(float controlMultiplier)
         {
-            smoothedSteerInput = Mathf.SmoothDamp(smoothedSteerInput, steerInput, ref steerInputVelocity,
-                steerSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
-
-            float drivingSpeed = Mathf.Max(CurrentForwardSpeed, CurrentReverseSpeed);
-            if (Mathf.Abs(smoothedSteerInput) < 0.01f || drivingSpeed < minSpeedToTurn)
+            if (!ControlsEnabled)
             {
+                smoothedSteerInput = 0f;
+                steerInputVelocity = 0f;
+                steeringYawRate = 0f;
                 return 0f;
             }
 
-            float speedFactor = Mathf.Clamp01(drivingSpeed / Mathf.Max(minSpeedToTurn, EffectiveMaxSpeed));
-            float speedInfluence = Mathf.Clamp01(speedFactor * Mathf.Max(0f, turnSpeedFactor));
-            float highSpeedFactor = Mathf.Lerp(1f, highSpeedSteeringReduction, speedFactor);
-            float steeringDirection = invertSteeringWhileReversing && CurrentReverseSpeed > CurrentForwardSpeed ? -smoothedSteerInput : smoothedSteerInput;
-            float steerAmount = Mathf.Clamp(steeringDirection * steerSensitivity, -1f, 1f);
-            float requestedDegreesPerSecond = steerAmount * turnSpeed * speedInfluence * highSpeedFactor * controlMultiplier;
-            float cappedDegreesPerSecond = Mathf.Clamp(requestedDegreesPerSecond, -maxSteerAngle, maxSteerAngle);
-            return cappedDegreesPerSecond * Time.fixedDeltaTime;
+            float targetInput = Mathf.Clamp(steerInput * Mathf.Max(0f, steerSensitivity), -1f, 1f);
+            smoothedSteerInput = Mathf.SmoothDamp(smoothedSteerInput, targetInput, ref steerInputVelocity,
+                Mathf.Max(0.01f, steerSmoothTime), Mathf.Infinity, Time.fixedDeltaTime);
+
+            float drivingSpeed = Mathf.Max(CurrentForwardSpeed, CurrentReverseSpeed);
+            if (drivingSpeed <= Mathf.Max(0.01f, minSpeedToTurn))
+            {
+                steeringYawRate = 0f;
+                return 0f;
+            }
+
+            float authority = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(minSpeedToTurn,
+                Mathf.Max(minSpeedToTurn + 0.1f, steeringFullSpeed), drivingSpeed));
+            authority = Mathf.Clamp01(authority * Mathf.Max(0f, turnSpeedFactor));
+            float reverse = invertSteeringWhileReversing && CurrentReverseSpeed > CurrentForwardSpeed ? -1f : 1f;
+            // Sine stays finite through the complete 0..90 degree steering range.
+            float targetYaw = Mathf.Sin(SteeringAngle * Mathf.Deg2Rad) * Mathf.Max(0f, turnSpeed)
+                * authority * SteeringSpeedDamping * controlMultiplier * reverse;
+            bool returning = Mathf.Abs(targetYaw) < Mathf.Abs(steeringYawRate)
+                || targetYaw * steeringYawRate < 0f;
+            float accelerationLimit = returning ? steeringReturnAcceleration : steeringAcceleration;
+            steeringYawRate = Mathf.MoveTowards(steeringYawRate, targetYaw,
+                Mathf.Max(1f, accelerationLimit) * Time.fixedDeltaTime);
+            return steeringYawRate * Time.fixedDeltaTime;
         }
 
         private void ApplyRoadRotation(float turnDegrees)
@@ -333,7 +361,7 @@ namespace BumperCars
         {
             Vector3 planarVelocity = GetPlanarVelocity(body.velocity);
             Vector3 lateralVelocity = Vector3.Project(planarVelocity, DriveRight);
-            float grip = lateralGrip * controlMultiplier;
+            float grip = (lateralGrip + Mathf.Abs(smoothedSteerInput) * Mathf.Max(0f, turningGripBoost)) * controlMultiplier;
             if (impactRecoveryTimer > 0f)
             {
                 grip *= impactGripMultiplier;
